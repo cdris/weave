@@ -1,5 +1,7 @@
 const WIDTH = 800;
 const HEIGHT = 600;
+const PAPER = Snap(WIDTH, HEIGHT);
+var activeWeft = null;
 
 function weave() {
   console.log("render!");
@@ -37,6 +39,10 @@ function weave() {
 
   var reader = new FileReader();
   reader.onload = function() {
+    if (activeWeft != null) {
+      activeWeft.stop();
+    }
+    PAPER.clear();
     renderWeave(heddles, width,
                 generateBinary(this.result), this.result.byteLength);
   }
@@ -54,19 +60,18 @@ function* generateBinary(buf) {
 }
 
 function renderWeave(heddles, width, binary, byteLength) {
-  var s = Snap(WIDTH, HEIGHT);
   var yarnWidth = WIDTH / ((width * 2) + 1);
-  var warp = generateWarp(s, width);
-  var weftPath = generateWeftPath(s, width, heddles, byteLength);
+  var warp = generateWarp(width);
+  var weftPath = generateWeftPath(width, heddles, byteLength);
   var weftLength = Snap.path.getTotalLength(weftPath);
-  var weft = s.path({
+  var weft = PAPER.path({
     path: Snap.path.getSubpath(weftPath, 0, 0),
     stroke: "#c00",
     strokeWidth: yarnWidth,
     strokeLinecap: "round",
     fillOpacity: 0
   });
-  var mask = generateMask(s, width, heddles, binary);
+  var mask = generateMask(width, heddles, binary);
 
   console.log('starting stroke animation');
   Snap.animate(0, weftLength,
@@ -81,12 +86,12 @@ function renderWeave(heddles, width, binary, byteLength) {
       function(){ console.log("done"); }); //callback
 }
 
-function generateWarp(s, width) {
-  var warp = s.g();
+function generateWarp(width) {
+  var warp = PAPER.g();
   var yarnWidth = WIDTH / ((width * 2) + 1);
   for (var i = 0; i < width; i++) {
     var x = yarnWidth * (i*2 + 1.5);
-    var line = s.line(x, 0, x, HEIGHT);
+    var line = PAPER.line(x, 0, x, HEIGHT);
     line.attr({
       stroke: "#bada55",
       strokeWidth: yarnWidth
@@ -96,7 +101,7 @@ function generateWarp(s, width) {
   return warp;
 }
 
-function generateWeftPath(s, width, heddles, byteLength) {
+function generateWeftPath(width, heddles, byteLength) {
   var numRows = Math.ceil((byteLength * 8) / heddles);
   var yarnWidth = WIDTH / ((width * 2) + 1);
   var path = `M 0 ${HEIGHT - (yarnWidth * 1.5)}`;
@@ -106,22 +111,11 @@ function generateWeftPath(s, width, heddles, byteLength) {
     path += ` L ${x} ${y} L ${x} ${y - (yarnWidth * 2)}`;
   }
   return path;
-  /*
-     var weft = s.path({
-  //path: path,
-  path: Snap.path.getSubpath(path, 0, 0),
-  stroke: "#c00",
-  strokeWidth: yarnWidth,
-  strokeLinecap: "round",
-  fillOpacity: 0
-  });
-  return { weft: weft, length: Snap.path.getTotalLength(path) };
-  */
 }
 
-function generateMask(s, width, heddles, binary) {
+function generateMask(width, heddles, binary) {
   var yarnWidth = WIDTH / ((width * 2) + 1);
-  var mask = s.g();
+  var mask = PAPER.g();
   var y = HEIGHT - (yarnWidth * 1.5);
   var i = 0;
   var p = ""
@@ -130,7 +124,7 @@ function generateMask(s, width, heddles, binary) {
       if (bit == 1) {
         for (var j = i % heddles; j < width; j += heddles) {
           var x = yarnWidth + (j * yarnWidth * 2);
-          line = s.line(x, y, x + yarnWidth, y);
+          line = PAPER.line(x, y, x + yarnWidth, y);
           line.attr({
             stroke: "#bada55",
             strokeWidth: yarnWidth + 1
@@ -141,7 +135,7 @@ function generateMask(s, width, heddles, binary) {
       i++;
       if (i % heddles == 0) {
         y -= yarnWidth * 2;
-        //console.log(p);
+        console.log(p);
         p = "";
       }
     }
@@ -152,8 +146,8 @@ function getCurve(x1, y1, x2, y2, sweep) {
   return `M ${x1} ${y1} A 1 1 0 0 ${sweep} ${x2} ${y2}`;
 }
 
-console.log(getCurve(1,2,3,4,1));
 /*
+console.log(getCurve(1,2,3,4,1));
    var loop = "M200 400 A 1 1 0 0 1 600 200";
 
    var loopLength = Snap.path.getTotalLength(loop);
