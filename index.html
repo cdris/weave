@@ -2,18 +2,52 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="css/weave.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   </head>
   <body>
-    <div style="background-color: lightgrey">
-      <form onSubmit="weave(); return false;">
-        Data: <input type="file" id="files" name="files"><br>
-        Width: <input type="number" id="width" name="width"><br>
-        Heddles: <input type="number" id="heddles" name="heddles"><br>
-        <input type="submit">
-      </form>
+    <div id="controls-container">
+      <div id="controls" class="container-fluid p-3">
+        <form onSubmit="return false;">
+          <div class="form-group row">
+            <label for="files" class="col-2 col-form-label">Data</label>
+            <input type="file" id="files" name="files" class="form-control col-10">
+          </div>
+          <div class="form-group row">
+            <label for="width" class="col-2">Width</label>
+            <input type="number" id="width" name="width" class="col-10">
+          </div>
+          <div class="form-group row">
+            <label for="heddles" class="col-2">Heddles</label>
+            <input type="number" id="heddles" name="heddles" class="col-10">
+          </div>
+          <div id="color-inputs" class="form-group row">
+            <label for="background-color" class="col-2">Background Color</label>
+            <input type="color" id="background-color" name="background-color" class="col-1">
+            <label for="warp-color" class="col-3">Warp Color</label>
+            <input type="color" id="warp-color" name="warp-color" class="col-1">
+            <label for="weft-color" class="col-3">Weft Color</label>
+            <input type="color" id="weft-color" name="weft-color" class="col-1">
+          </div>
+          <button id="weave-btn" type="submit" class="btn btn-primary">Weave!</button>
+        </form>
+      </div>
+      <div id="buttons">
+        <div id="play-pause" class="perm-button">
+          <span class="fa fa-play"></span>
+        </div>
+        <div id="show-hide" class="perm-button">
+          <span class="fa fa-chevron-up"></span>
+        </div>
+      </div>
     </div>
+    <svg id="svg-view"></svg>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="js/snap.svg-min.js"></script>
+    <script src="js/svg-pan-zoom.min.js"></script>
     <script src="js/weave.js"></script>
   </body>
 </html>
